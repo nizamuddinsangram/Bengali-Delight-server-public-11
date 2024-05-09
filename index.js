@@ -59,6 +59,10 @@ async function run() {
         .toArray();
       res.send(result);
     });
+    app.get("/allFoods", async (req, res) => {
+      const result = await foodsCollection.find().toArray();
+      res.send(result);
+    });
 
     //---------jwt token for authentication and authorization--------
     app.post("/jwt", (req, res) => {
