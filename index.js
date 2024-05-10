@@ -52,6 +52,12 @@ async function run() {
       .collection("purchase");
 
     //------------different collections----------
+    //foods post api
+    app.post("/foods", async (req, res) => {
+      const addFood = req.body;
+      const result = await foodsCollection.insertOne(addFood);
+      res.send(result);
+    });
     //find 6 data user number of purchases / This is our Top foods section
 
     app.get("/foods", async (req, res) => {
@@ -103,7 +109,7 @@ async function run() {
       res.send({ name: "nizam" });
     });
     // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
+    await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
