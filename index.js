@@ -47,6 +47,9 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const foodsCollection = client.db("Bengali-DelightsDB").collection("foods");
+    const purchaseCollection = client
+      .db("Bengali-DelightsDB")
+      .collection("purchase");
 
     //------------different collections----------
     //find 6 data user number of purchases / This is our Top foods section
@@ -67,6 +70,12 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await foodsCollection.findOne(query);
+      res.send(result);
+    });
+    // purchase data post api
+    app.post("/purchases", async (req, res) => {
+      const order = req.body;
+      const result = await purchaseCollection.insertOne(order);
       res.send(result);
     });
 
