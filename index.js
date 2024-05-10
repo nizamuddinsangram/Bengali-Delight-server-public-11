@@ -58,6 +58,24 @@ async function run() {
       const result = await foodsCollection.insertOne(addFood);
       res.send(result);
     });
+    // food items find by email which product i added
+    app.get("/foods/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = {
+        "addedBy.email": email,
+      };
+      const result = await foodsCollection.find(query).toArray();
+      res.send(result);
+    });
+    //delete food items
+    app.delete("/foods/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await foodsCollection.deleteOne(query);
+      res.send(result);
+    });
     //find 6 data user number of purchases / This is our Top foods section
 
     app.get("/foods", async (req, res) => {
