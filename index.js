@@ -122,7 +122,14 @@ async function run() {
       const result = await purchaseCollection.insertOne(order);
       res.send(result);
     });
-
+    app.get("/purchases/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = {
+        buyer_email: email,
+      };
+      const result = await purchaseCollection.find(query).toArray();
+      res.send(result);
+    });
     //---------jwt token for authentication and authorization--------
     app.post("/jwt", (req, res) => {
       const user = req.body;
