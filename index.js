@@ -76,6 +76,24 @@ async function run() {
       const result = await foodsCollection.deleteOne(query);
       res.send(result);
     });
+    //updated food items
+    app.put("/foods/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedFood = req.body;
+      const updatedDoc = {
+        $set: {
+          ...updatedFood,
+        },
+      };
+      const result = await foodsCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
     //find 6 data user number of purchases / This is our Top foods section
 
     app.get("/foods", async (req, res) => {
@@ -86,10 +104,12 @@ async function run() {
         .toArray();
       res.send(result);
     });
+    // all food related api
     app.get("/allFoods", async (req, res) => {
       const result = await foodsCollection.find().toArray();
       res.send(result);
     });
+    //single foods related api
     app.get("/allFoods/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
