@@ -146,6 +146,11 @@ async function run() {
       const result = await feedBackCollection.insertOne(feedback);
       res.send(result);
     });
+    //all feedback show api
+    app.get("/feedback", async (req, res) => {
+      const result = await feedBackCollection.find().toArray();
+      res.send(result);
+    });
 
     //---------jwt token for authentication and authorization--------
     app.post("/jwt", (req, res) => {
