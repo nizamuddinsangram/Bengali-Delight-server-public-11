@@ -63,10 +63,11 @@ async function run() {
       const result = await foodsCollection.find().toArray();
       res.send(result);
     });
-    app.get("/allFood/:id", async (req, res) => {
+    app.get("/allFoods/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      console.log(id);
+      const result = await foodsCollection.findOne(query);
+      res.send(result);
     });
 
     //---------jwt token for authentication and authorization--------
