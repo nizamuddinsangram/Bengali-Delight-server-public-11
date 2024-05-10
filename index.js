@@ -47,6 +47,9 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const foodsCollection = client.db("Bengali-DelightsDB").collection("foods");
+    const feedBackCollection = client
+      .db("Bengali-DelightsDB")
+      .collection("feedback");
     const purchaseCollection = client
       .db("Bengali-DelightsDB")
       .collection("purchase");
@@ -130,6 +133,20 @@ async function run() {
       const result = await purchaseCollection.find(query).toArray();
       res.send(result);
     });
+    //purchase data delete api
+    app.delete("/purchases/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await purchaseCollection.deleteOne(query);
+      res.send(result);
+    });
+    // feedback related api  osum
+    app.post("/feedback", async (req, res) => {
+      const feedback = req.body;
+      const result = await feedBackCollection.insertOne(feedback);
+      res.send(result);
+    });
+
     //---------jwt token for authentication and authorization--------
     app.post("/jwt", (req, res) => {
       const user = req.body;
