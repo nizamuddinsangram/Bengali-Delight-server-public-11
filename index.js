@@ -121,9 +121,13 @@ async function run() {
     });
     // purchase data post api
     app.post("/purchases", async (req, res) => {
-      const order = req.body;
-      const result = await purchaseCollection.insertOne(order);
-      res.send(result);
+      const { foodId, ...order } = req.body;
+
+      const PurchaseResult = await purchaseCollection.insertOne(order);
+      const filter = { _id: new ObjectId(foodId) };
+      const updateDoc = { $inc: { quantity: -1, numberOfPurchases: 1 } };
+      const updateResult = await foodsCollection.updateOne(filter, updateDoc);
+      res.send({ PurchaseResult, updateResult });
     });
     app.get("/purchases/:email", async (req, res) => {
       const email = req.params.email;
