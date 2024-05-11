@@ -112,14 +112,14 @@ async function run() {
       const result = await foodsCollection.find().toArray();
       res.send(result);
     });
-    //search data by name
-    // app.get("/search", async (req, res) => {
-    //   const foodName = req.body;
-    //   const result = await foodsCollection
-    //     .find({ foodName: foodName })
-    //     .toArray();
-    //   res.send(result);
-    // });
+    // search data by name
+    app.get("/search", async (req, res) => {
+      const foodName = req.query.foodName;
+      const result = await foodsCollection
+        .find({ foodName: foodName })
+        .toArray();
+      res.send(result);
+    });
     //single foods related api
     app.get("/allFoods/:id", async (req, res) => {
       const id = req.params.id;
