@@ -11,7 +11,11 @@ require("dotenv").config();
 //middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://assignment-eleven-cea95.web.app",
+      "https://assignment-eleven-cea95.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
@@ -42,6 +46,15 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production" ? true : false,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+// {
+//   httpOnly: true,
+//   secure: false,
+// }
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -171,25 +184,22 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
         expiresIn: "30h",
       });
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: false,
-        })
-        .send({ success: true });
+      res.cookie("token", token, cookieOptions).send({ success: true });
     });
     //token removed from cookie
     app.post("/logout", (req, res) => {
       const user = req.body;
-      res.clearCookie("token", { maxAge: 0 }).send({ success: true });
+      res
+        .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+        .send({ success: true });
     });
-    app.get("/test", verifyToken, async (req, res) => {
-      const data = req.user;
-      // console.log("tested data ", data);
-      res.send({ name: "nizam" });
-    });
+    // app.get("/test", verifyToken, async (req, res) => {
+    //   const data = req.user;
+    //   // console.log("tested data ", data);
+    //   res.send({ name: "nizam" });
+    // });
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
