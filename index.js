@@ -128,12 +128,13 @@ async function run() {
       res.send(result);
     });
     // purchase data post api
-    app.post("/purchases", async (req, res) => {
-      const { foodId, ...order } = req.body;
-
+    app.post("/purchases", verifyToken, async (req, res) => {
+      // const user1 = req.user;
+      // console.log(user1);
+      const { foodId, quantity, ...order } = req.body;
       const PurchaseResult = await purchaseCollection.insertOne(order);
       const filter = { _id: new ObjectId(foodId) };
-      const updateDoc = { $inc: { quantity: -1, numberOfPurchases: 1 } };
+      const updateDoc = { $inc: { quantity: -quantity, numberOfPurchases: 1 } };
       const updateResult = await foodsCollection.updateOne(filter, updateDoc);
       res.send({ PurchaseResult, updateResult });
     });
