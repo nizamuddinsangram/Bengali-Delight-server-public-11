@@ -120,6 +120,7 @@ async function run() {
         .toArray();
       res.send(result);
     });
+
     // all food related api
     app.get("/allFoods", async (req, res) => {
       const result = await foodsCollection.find().toArray();
@@ -142,8 +143,6 @@ async function run() {
     });
     // purchase data post api
     app.post("/purchases", verifyToken, async (req, res) => {
-      // const user1 = req.user;
-      // console.log(user1);
       const { foodId, quantity, ...order } = req.body;
       const PurchaseResult = await purchaseCollection.insertOne(order);
       const filter = { _id: new ObjectId(foodId) };
