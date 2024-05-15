@@ -151,9 +151,9 @@ async function run() {
       res.send({ PurchaseResult, updateResult });
     });
     app.get("/purchases/:email", verifyToken, async (req, res) => {
-      const email = req.params.email;
+      const email = req?.params?.email;
       console.log(req.user.email);
-      if (email !== req.user.email) {
+      if (req?.user?.email !== req?.params?.email) {
         return res.status(403).sent({ message: "forbidden access" });
       }
       const query = {
