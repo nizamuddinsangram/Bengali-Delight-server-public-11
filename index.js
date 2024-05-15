@@ -142,7 +142,7 @@ async function run() {
       res.send(result);
     });
     // purchase data post api
-    app.post("/purchases", verifyToken, async (req, res) => {
+    app.post("/purchases", async (req, res) => {
       const { foodId, quantity, ...order } = req.body;
       const PurchaseResult = await purchaseCollection.insertOne(order);
       const filter = { _id: new ObjectId(foodId) };
@@ -150,8 +150,12 @@ async function run() {
       const updateResult = await foodsCollection.updateOne(filter, updateDoc);
       res.send({ PurchaseResult, updateResult });
     });
-    app.get("/purchases/:email", async (req, res) => {
+    app.get("/purchases/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      console.log(req.user.email);
+      if (email !== req.user.email) {
+        return res.status(403).sent({ message: "forbidden access" });
+      }
       const query = {
         buyer_email: email,
       };
