@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
@@ -5,16 +6,17 @@ const port = process.env.PORT || 8000;
 const app = express();
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-
-require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 //middleware
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://assignment-eleven-cea95.web.app",
-      "https://assignment-eleven-cea95.firebaseapp.com",
+      // "https://assignment-eleven-cea95.web.app",
+      // "http://localhost:5174",
+
+      // "https://assignment-eleven-cea95.firebaseapp.com",
     ],
     credentials: true,
   })
@@ -150,6 +152,7 @@ async function run() {
       const updateResult = await foodsCollection.updateOne(filter, updateDoc);
       res.send({ PurchaseResult, updateResult });
     });
+    //my puchase impormation api
     app.get("/purchases/:email", verifyToken, async (req, res) => {
       const email = req?.params?.email;
       console.log(req.user.email);
@@ -196,6 +199,20 @@ async function run() {
         .clearCookie("token", { ...cookieOptions, maxAge: 0 })
         .send({ success: true });
     });
+    // create a payment account
+    app.post("/create-payment-intent", async (req, res) => {
+      const { price } = req.body;
+
+      const amount = parseInt(price * 100);
+      console.log(amount);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+      });
+      res.send({ clientSecret: paymentIntent.client_secret });
+    });
+
     // app.get("/test", verifyToken, async (req, res) => {
     //   const data = req.user;
     //   // console.log("tested data ", data);
